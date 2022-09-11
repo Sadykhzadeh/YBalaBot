@@ -71,14 +71,9 @@ const inlineQueryFunc = async (ctx: Context) => {
 
   const result = intros.map((i) => ({
     type: "article",
-    id: i[0] + "4321" + +(new Date()),
+    id: i[0] + "-" + (+new Date() % 1000000),
     title: i[1],
-    description: i[2].toString()
-      .replaceAll("Балабоба", "бот")
-      .replaceAll(
-        "Балабобы",
-        "бота",
-      ),
+    description: i[2].toString(),
     input_message_content: {
       message_text:
         `<b>${inlineQuery.query}</b> <i>(История генерируется, подождите...)</i>`,
@@ -87,12 +82,12 @@ const inlineQueryFunc = async (ctx: Context) => {
     reply_markup: supportMe,
   }));
   await ctx.answerInlineQuery(result, {
-    cache_time: 0,
+    cache_time: 2500,
   });
 };
 
 const chosenInlineResultFunc = async (ctx: Context) => {
-  const intro = +ctx.chosenInlineResult.result_id.split("4321")[0];
+  const intro = +ctx.chosenInlineResult.result_id.split("-")[0];
 
   const postData = await fetch("https://zeapi.yandex.net/lab/api/yalm/text3", {
       method: "POST",
