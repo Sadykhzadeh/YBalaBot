@@ -5,6 +5,7 @@ import {
   GrammyError,
   HttpError,
 } from "https://deno.land/x/grammy@v1.10.1/mod.ts";
+import { intros } from "./config.ts";
 
 const replyMarkup = {
   inline_keyboard: [[{
@@ -61,21 +62,22 @@ const messageHandler = async (ctx: Context) => {
 const inlineQueryFunc = async (ctx: Context) => {
   const { inlineQuery } = ctx;
 
-  if (!inlineQuery.query) {
-    ctx.answerInlineQuery([]);
-  }
+  // if (!inlineQuery.query.trim()) return;
 
-  const intros = await fetch("https://zeapi.yandex.net/lab/api/yalm/intros"),
-    introsJson = await intros.json();
+  // const intros = await fetch("https://zeapi.yandex.net/lab/api/yalm/intros"),
+  //   introsJson = await intros.json();
+  // console.log(introsJson.intros);
 
-  const result = introsJson.intros.map((i) => ({
+  const result = intros.map((i) => ({
     type: "article",
     id: i[0] + "4321" + +(new Date()),
     title: i[1],
-    description: i[2].toString().replaceAll("Балабоба", "бот").replaceAll(
-      "Балабобы",
-      "бота",
-    ),
+    description: i[2].toString()
+      .replaceAll("Балабоба", "бот")
+      .replaceAll(
+        "Балабобы",
+        "бота",
+      ),
     input_message_content: {
       message_text:
         `<b>${inlineQuery.query}</b> <i>(История генерируется, подождите...)</i>`,
@@ -102,6 +104,8 @@ const chosenInlineResultFunc = async (ctx: Context) => {
     }),
     postDataJson = await postData.json();
 
+  console.log(postDataJson);
+
   if (postDataJson["bad_query"] > 0) {
     await ctx.editMessageText(
       `<b>Бот не умеет в политику и/или религию.</b>
@@ -114,7 +118,7 @@ const chosenInlineResultFunc = async (ctx: Context) => {
     );
   } else {
     await ctx.editMessageText(
-      `<b>${ctx.chosenInlineResult.query}</b> ${postDataJson.text}`,
+      `<b>${postDataJson.query}</b>${postDataJson.text}`,
       {
         parse_mode: "HTML",
       },

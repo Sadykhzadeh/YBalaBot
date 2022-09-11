@@ -15,12 +15,14 @@ const bot = new Bot(botToken);
 
 bot.use(async (ctx: Context, next) => {
   try {
-    await ctx.api.sendMessage(admin, '<code>' + JSON.stringify(ctx.update, null, 2) + '</code>', {
-      parse_mode: 'HTML'
-    });
+    const logs = JSON.stringify(ctx.update, null, 2);
+    console.log(logs);
     await next();
   } catch (err) {
     console.log(err);
+    await ctx.api.sendMessage(admin, "<code>" + err + "</code>", {
+      parse_mode: "HTML",
+    });
   }
 });
 
