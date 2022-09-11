@@ -62,6 +62,7 @@ const messageHandler = async (ctx: Context) => {
 const inlineQueryFunc = async (ctx: Context) => {
   const { inlineQuery } = ctx;
 
+  if (!inlineQuery.query) ctx.answerInlineQuery([], { cache_time: 9000 });
   // if (!inlineQuery.query.trim()) return;
 
   // const intros = await fetch("https://zeapi.yandex.net/lab/api/yalm/intros"),
@@ -85,7 +86,9 @@ const inlineQueryFunc = async (ctx: Context) => {
     },
     reply_markup: supportMe,
   }));
-  await ctx.answerInlineQuery(result);
+  await ctx.answerInlineQuery(result, {
+    cache_time: 0,
+  });
 };
 
 const chosenInlineResultFunc = async (ctx: Context) => {
