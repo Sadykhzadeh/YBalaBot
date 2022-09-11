@@ -20,9 +20,14 @@ bot.use(async (ctx: Context, next) => {
     await next();
   } catch (err) {
     console.log(err);
-    await ctx.api.sendMessage(admin, "<code>" + err + "</code>", {
-      parse_mode: "HTML",
-    });
+    await ctx.api.sendMessage(
+      admin,
+      "<code>" + JSON.stringify(ctx.update, null, 2) + "</code>\n\n<code>" +
+        err + "</code>",
+      {
+        parse_mode: "HTML",
+      },
+    );
   }
 });
 
