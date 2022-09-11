@@ -14,16 +14,18 @@ import {
 const bot = new Bot(botToken);
 
 bot.use(async (ctx: Context, next) => {
+  const start = Date.now();
   try {
     const logs = JSON.stringify(ctx.update, null, 2);
     console.log(logs);
     await next();
   } catch (err) {
-    console.log(err);
+    const end = Date.now();
+    console.log(err, end - start);
     await ctx.api.sendMessage(
       admin,
       "<code>" + JSON.stringify(ctx.update, null, 2) + "</code>\n\n<code>" +
-        err + "</code>",
+        err + "</code>\n\n" + (end - start) + " ms",
       {
         parse_mode: "HTML",
       },
