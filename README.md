@@ -1,7 +1,7 @@
 <br/>
 <p align="center">
   <a href="https://github.com/Sadykhzadeh/YBalaBot">
-    <img src="./images/pp.jpg" alt="Logo" width="80" height="80">
+    <img src="./images/pp.jpg" alt="Logo" width="150" height="150">
   </a>
 
   <h3 align="center">YBalaBot</h3>
