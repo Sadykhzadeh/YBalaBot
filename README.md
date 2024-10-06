@@ -1,3 +1,7 @@
+> [!WARNING]  
+> **Balaboba's enjoying a well-deserved rest now.** It was created in 2021 to demonstrate the features of the first version of YaLM (Yet another Language Model), but now is closed by its owner, Yandex.
+
+<hr/>
 <br/>
 <p align="center">
   <a href="https://github.com/Sadykhzadeh/YBalaBot">
