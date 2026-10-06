@@ -1,5 +1,5 @@
-import { Bot } from "https://deno.land/x/grammy@v1.10.1/mod.ts";
-import { Context } from "https://deno.land/x/grammy@v1.10.1/context.ts";
+import { Bot } from "grammy";
+import { Context } from "grammy/context";
 
 import { admin, botToken } from "./config.ts";
 import {

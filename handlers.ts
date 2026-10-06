@@ -1,10 +1,12 @@
-import { Context } from "https://deno.land/x/grammy@v1.10.1/context.ts";
+import { Context } from "grammy/context";
 
 import {
   BotError,
+  CommandContext,
+  Filter,
   GrammyError,
   HttpError,
-} from "https://deno.land/x/grammy@v1.10.1/mod.ts";
+} from "grammy";
 import { intros } from "./config.ts";
 
 const replyMarkup = {
@@ -20,9 +22,12 @@ const supportMe = {
   }]],
 };
 
-const startHandler = async (ctx: Context) => {
-  let name: string = ctx.message.from?.first_name;
-  if (ctx.message.from?.last_name) name += " " + ctx.message.from?.last_name;
+const startHandler = async (ctx: CommandContext<Context>) => {
+  // first_name is optional on the API, and this read it into a `string` and
+  // appended to it - a user without one saw "Привет, undefined!".
+  const name = [ctx.from?.first_name, ctx.from?.last_name]
+    .filter(Boolean)
+    .join(" ");
   await ctx.reply(
     `🫰🏻 <b>Привет, ${name}! \n</b>` +
       "Этот бот продолжит твой текст на любую тему, сохраняя связность и заданный стиль.\n" +
@@ -38,7 +43,7 @@ const startHandler = async (ctx: Context) => {
   );
 };
 
-const ahtungHandler = async (ctx: Context) => {
+const ahtungHandler = async (ctx: CommandContext<Context>) => {
   await ctx.reply(
     `1) <b>У бота нет своего мнения или знания.</b> Он умеет только подражать — писать тексты так, чтобы они были максимально похожи на реальные тексты из интернета.
 2) <b>Генератор может выдавать очень странные тексты.</b> Пожалуйста, будьте разумны, распространяя их. Подумайте, не будет ли текст обидным для кого-то и не станет ли его публикация нарушением закона.
@@ -52,32 +57,37 @@ const ahtungHandler = async (ctx: Context) => {
   );
 };
 
-const messageHandler = async (ctx: Context) => {
+const messageHandler = async (ctx: Filter<Context, "message">) => {
   if (ctx.update.message?.via_bot?.id) return;
   await ctx.reply(
     "Я работаю только в режиме inline. Нажми /start, если не понял, о чём я.",
   );
 };
 
-const inlineQueryFunc = async (ctx: Context) => {
+const inlineQueryFunc = async (ctx: Filter<Context, "inline_query">) => {
   const { inlineQuery } = ctx;
 
-  if (!inlineQuery.query) ctx.answerInlineQuery([], { cache_time: 9000 });
-  // if (!inlineQuery.query.trim()) return;
+  // This had no return, so an empty query was answered here and then answered
+  // a second time below - Telegram rejects the second one. The call was not
+  // awaited either.
+  if (!inlineQuery.query.trim()) {
+    await ctx.answerInlineQuery([], { cache_time: 9000 });
+    return;
+  }
 
   // const intros = await fetch("https://zeapi.yandex.net/lab/api/yalm/intros"),
   //   introsJson = await intros.json();
   // console.log(introsJson.intros);
 
   const result = intros.map((i) => ({
-    type: "article",
+    type: "article" as const,
     id: i[0] + "-" + (+new Date() % 1000000),
     title: i[1],
-    description: i[2].toString(),
+    description: i[2],
     input_message_content: {
       message_text:
         `<b>${inlineQuery.query}</b> <i>(История генерируется, подождите...)</i>`,
-      parse_mode: "HTML",
+      parse_mode: "HTML" as const,
     },
     reply_markup: supportMe,
   }));
@@ -86,7 +96,9 @@ const inlineQueryFunc = async (ctx: Context) => {
   });
 };
 
-const chosenInlineResultFunc = async (ctx: Context) => {
+const chosenInlineResultFunc = async (
+  ctx: Filter<Context, "chosen_inline_result">,
+) => {
   const intro = +ctx.chosenInlineResult.result_id.split("-")[0];
 
   const postData = await fetch("https://zeapi.yandex.net/lab/api/yalm/text3", {

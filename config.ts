@@ -1,9 +1,20 @@
-import { config } from "https://deno.land/x/dotenv/mod.ts";
+// This used to import https://deno.land/x/dotenv/mod.ts, a URL with no
+// version in it: every run took whatever that path served on the day, which
+// is both a supply-chain hole and unreproducible. config() was also called
+// once per export, so the .env file was read twice. `deno run --env-file`
+// loads it without a third-party dependency at all.
+const required = (name: string): string => {
+  const value = Deno.env.get(name);
+  if (!value) throw new Error(`${name} is not set - copy .sample.env to .env`);
+  return value;
+};
 
-export const botToken = config().TOKEN;
-export const admin = config().ADMIN;
+export const botToken = required("TOKEN");
+export const admin = required("ADMIN");
 
-export const intros = [
+// Typed as tuples: as a plain array this was (string | number)[][], which made
+// every title a string | number and the inline results fail to type-check.
+export const intros: ReadonlyArray<readonly [number, string, string]> = [
   [0, "Без стиля", "Напишите что-нибудь и получите продолжение от бота"],
   [
     24,

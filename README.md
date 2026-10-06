@@ -30,6 +30,18 @@ This bot implements <a href="https://yandex.ru/lab/yalm">Yandex Balabola API</a>
 
 Balaboba demonstrates how neural networks of the YaLM family can generate a coherent text on any topic, while maintaining a preset style. In Balaboba’s case, YaLM is used for entertainment, but the models were originally developed for serious tasks – for example, to improve a search engine and develop a voice assistant. Learn more <a href="https://yandex.com/lab/yalm-howto-en">here.</a>
 
+## Running it
+
+```sh
+cp .sample.env .env    # TOKEN from @BotFather, ADMIN = your Telegram id
+deno task start
+```
+
+`deno task check`, `deno task lint` and `deno task fmt` are what CI runs.
+Dependencies live in the `imports` map of `deno.json` and are pinned by
+`deno.lock`; `--env-file` loads `.env`, so there is no dotenv dependency.
+Both `TOKEN` and `ADMIN` are required and the bot says which one is missing.
+
 ## Built With
 
 Thanks to:

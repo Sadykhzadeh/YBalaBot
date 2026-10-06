@@ -1,0 +1,26 @@
+{
+  "imports": {
+    "grammy": "https://deno.land/x/grammy@v1.38.4/mod.ts",
+    "grammy/context": "https://deno.land/x/grammy@v1.38.4/context.ts"
+  },
+  "tasks": {
+    "start": "deno run --allow-env --allow-net --allow-read --allow-import --env-file index.ts",
+    "check": "deno check --allow-import index.ts",
+    "lint": "deno lint",
+    "fmt": "deno fmt --check"
+  },
+  "fmt": {
+    "include": [
+      "index.ts",
+      "handlers.ts",
+      "config.ts"
+    ]
+  },
+  "lint": {
+    "include": [
+      "index.ts",
+      "handlers.ts",
+      "config.ts"
+    ]
+  }
+}
